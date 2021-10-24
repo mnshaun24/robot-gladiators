@@ -16,12 +16,16 @@ var fightOrSkip = function() {
       return fightOrSkip();
    } 
 
-   if (promptFight === "skip" || promptFight === "SKIP") {
+   promptFight = promptFight.toLowerCase();
+
+   if (promptFight === "skip") {
      var confirmSkip = window.confirm("Are you sure you'd like to quit?");
       if (confirmSkip) {
         window.alert(playerInfo.name + " has decided to skip this fight. Goodbye.");
-        playerInfo.playerMoney = playerInfo.money - 10;
+        playerInfo.money = Math.max(0, playerInfo.money - 10);
         shop();
+
+        return true;
       }     
    }
 }
@@ -29,8 +33,10 @@ var fightOrSkip = function() {
 // fight function (now with parameter for enemy's object holding name, health, and attack values)
 var fight = function(enemy) {
   while (playerInfo.health > 0 && enemy.health > 0) {
-    fightOrSkip();
-  } 
+    if (fightOrSkip()) {
+      // if true, leave fight by breaking loop
+      break;
+    };
 
     // generate random damage value based on player's attack power
     var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
@@ -70,6 +76,7 @@ var fight = function(enemy) {
     } else {
       window.alert(playerInfo.name + ' still has ' + playerInfo.health + ' health left.');
     }
+  }
   };
 
 // function to start a new game
